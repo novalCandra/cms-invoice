@@ -1,8 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;600;700;800;900&display=swap");
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 @layer base {
 
@@ -112,6 +114,24 @@
     --status-pending: 45 100% 55%;
     --status-overdue: 0 100% 60%;
   }
+
+
+  .theme {
+    --font-heading: var(--font-sans);
+    --font-sans: 'Geist Variable', sans-serif;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    @apply font-sans;
+  }
 }
 
 @layer base {
@@ -186,7 +206,7 @@
     @apply outline-none ring-2 ring-foreground;
   }
 
-  /* Scrollbar styling */
+  /* Scrollbar styling  */
   ::-webkit-scrollbar {
     @apply w-3 h-3;
   }

@@ -1,9 +1,31 @@
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
+import { useForm } from "react-hook-form";
+import axios from "axios"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TypeLogin } from 'types/type'
+import { SchemaLogin } from '../../schema/schema';
 export default function LoginPage() {
+    const navigate = useNavigate();
+    const [token, setToken] = useState<string>("")
     const [showPassword, setShowPassword] = useState<boolean>(false);
+    const { register, handleSubmit, formState: { errors } } = useForm<TypeLogin>({
+        resolver: zodResolver(SchemaLogin)
+    });
+    const onSubmit = async (data: TypeLogin) => {
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, data, {
+                withCredentials: true
+            });
+            localStorage.setItem("token", response.data.token);
+            navigate("/dashboard")
+        } catch (error) {
+            console.log(error)
+            return console.log("kesalahan api")
+        }
+    }
     return (
         <>
             <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
@@ -13,7 +35,7 @@ export default function LoginPage() {
                     {/* End Header */}
 
                     {/* Form */}
-                    <form action="" className='space-y-6'>
+                    <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
                         <div className="text-center mb-8">
                             <h2 className='text-3xl font-black'>LOGIN</h2>
                             <p className='text-muted-foreground text-sm mt-2 font-bold'>
@@ -25,7 +47,8 @@ export default function LoginPage() {
                             <label htmlFor="" className='block font-bold uppercase text-sm'>Email</label>
                             <div className="relative">
                                 <Mail size={20} className='absolute left-4 top-3.5 text-muted-foreground pointer-events-none' />
-                                <input type="text" id='email' name='email' placeholder='Enter Your Email' className='w-full pl-12 pr-4 py-3 border-border bg-background text-foreground font-bold' />
+                                <input {...register('email')} type="text" id='email' name='email' placeholder='Enter Your Email' className='w-full pl-12 pr-4 py-3 border-border bg-background text-foreground font-bold' />
+                                {errors.email && <span className='text-red-500 mt-2'>Email Wajib Diisi</span>}
                             </div>
                         </div>
                         {/* End Email */}
@@ -34,7 +57,8 @@ export default function LoginPage() {
                             <label htmlFor="" className='block font-bold uppercase text-sm'>PASSWORD</label>
                             <div className="relative">
                                 <Lock size={20} className='absolute left-4 top-3.5 text-muted-foreground pointer-events-none' />
-                                <input type="password" id='password' placeholder='*****' name='password' className='w-full pl-12 pr-4 py-3 border-border bg-background text-foreground font-bold' />
+                                <input {...register('password')} type="password" id='password' placeholder='*****' name='password' className='w-full pl-12 pr-4 py-3 border-border bg-background text-foreground font-bold' />
+                                {errors.password && <span className='text-red-500 mt-2'>Password Wajib Diisi</span>}
                                 <button type='button' className='absolute right-4 top-3.5 text-muted-foreground hover:text-foreground transition-colors' aria-label='Toggle password visibility'>
                                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                 </button>

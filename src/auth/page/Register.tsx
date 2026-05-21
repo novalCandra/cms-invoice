@@ -1,15 +1,32 @@
 import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SchemaRegister } from '../../schema/schema';
+import { TypeRegister } from 'types/type';
+import axios from 'axios';
 export default function RegisterPage() {
+    const navigate = useNavigate();
     const [showPassword, SetShowPassword] = useState<boolean>(false);
+    const { handleSubmit, register, formState: { errors } } = useForm<TypeRegister>({
+        resolver: zodResolver(SchemaRegister)
+    });
+    const onSubmit = async (data: TypeRegister) => {
+        try {
+            await axios.post(`${process.env.VITE_API_URL}/register`, data)
+            navigate("/login")
+        } catch (error) {
+            return console.log(error)
+        }
+    }
     return (
         <div className="min-h-screen bg-background text-muted-foreground flex items-center justify-center p-4">
             <div className="w-full max-w-md">
                 <Header propsJudul='INVOIX' propsDeskipsi='Invoice Management System' />
 
-                <form action="" className='space-y-6'>
+                <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
                     <div className="text-center mb-8">
                         <h2 className='text-3xl font-bold text-black'>CREATE ACCOUNT</h2>
                         <p className='text-muted-foreground text-sm mt-2 font-bold'>
@@ -21,7 +38,8 @@ export default function RegisterPage() {
                         <label htmlFor="" className='block font-bold uppercase text-sm text-black'>FULL NAME</label>
                         <div className="relative">
                             <User size={20} className='absolute left-4 top-3.5 text-muted-foreground pointer-events-none' />
-                            <input type="text" id='username' placeholder='Enter Your username' name='username' className='w-full pl-12 pr-4 py-3 border-border bg-background text-foreground font-bold' />
+                            <input {...register('nama')} type="text" id='nama' placeholder='Enter Your username' name='nama' className='w-full pl-12 pr-4 py-3 border-border bg-background text-foreground font-bold' />
+                            {errors.nama && <span className='text-red-500 mt-2'>{errors.nama.message}</span>}
                         </div>
                     </div>
 
@@ -29,7 +47,8 @@ export default function RegisterPage() {
                         <label htmlFor="" className='block font-bold uppercase text-sm text-black'>EMAIL</label>
                         <div className="relative">
                             <Mail size={20} className='absolute left-4 top-3.5 text-muted-foreground pointer-events-none' />
-                            <input type="email" id='email' placeholder='Enter your mail' name='email' className='w-full pl-12 pr-4 py-3 border-border bg-background text-foreground font-bold' />
+                            <input {...register('email')} type="email" id='email' placeholder='Enter your mail' name='email' className='w-full pl-12 pr-4 py-3 border-border bg-background text-foreground font-bold' />
+                            {errors.email && <span className='text-red-500 mt-2'>{errors.nama.message}</span>}
                         </div>
                     </div>
 
@@ -37,7 +56,8 @@ export default function RegisterPage() {
                         <label htmlFor="" className='block font-bold uppercase text-sm text-black'>PASSWORD</label>
                         <div className="relative">
                             <Lock size={20} className='absolute left-4 top-3.5 text-muted-foreground pointer-events-none' />
-                            <input type="password" id='password' placeholder='*****' name='password' className='w-full pl-12 pr-4 py-3 border-border bg-background text-foreground font-bold' />
+                            <input {...register("password")} type="password" id='password' placeholder='*****' name='password' className='w-full pl-12 pr-4 py-3 border-border bg-background text-foreground font-bold' />
+                            {errors.password && <span className='text-red-500 mt-2'>{errors.password.message}</span>}
                             <button type='button' className='absolute right-4 top-3.5 text-muted-foreground hover:text-foreground transition-colors' aria-label='Toggle password visibilty'>
                                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>

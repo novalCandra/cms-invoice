@@ -15,7 +15,7 @@ export default function RegisterPage() {
     });
     const onSubmit = async (data: TypeRegister) => {
         try {
-            await axios.post(`${process.env.VITE_API_URL}/register`, data)
+            await axios.post(`${import.meta.env.VITE_API_URL}/register`, data)
             navigate("/login")
         } catch (error) {
             return console.log(error)

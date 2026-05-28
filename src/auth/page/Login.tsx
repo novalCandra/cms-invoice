@@ -9,7 +9,6 @@ import { TypeLogin } from 'types/type'
 import { SchemaLogin } from '../../schema/schema';
 export default function LoginPage() {
     const navigate = useNavigate();
-    const [token, setToken] = useState<string>("")
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const { register, handleSubmit, formState: { errors } } = useForm<TypeLogin>({
         resolver: zodResolver(SchemaLogin)
@@ -20,6 +19,7 @@ export default function LoginPage() {
                 withCredentials: true
             });
             localStorage.setItem("token", response.data.token);
+            localStorage.setItem("nama", response.data.data.nama);
             navigate("/dashboard")
         } catch (error) {
             console.log(error)

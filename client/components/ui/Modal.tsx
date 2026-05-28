@@ -1,19 +1,19 @@
 import { X } from "lucide-react"
-import InterFaceInvoice from "../../../interface/interFace.ts"
+import { InterFaceInvoice } from "../../../interface/interFace.ts"
 import themeInvoice from "../../../theme/InvoiceTheme.ts"
 import React, { useState } from "react"
-import { InvoiceData } from "types/type.ts";
+import { InvoiceData, typeInvoiceTheme } from "types/type.ts";
 export default function ModalPage({ isOpen, onClose, onCreate }: InterFaceInvoice) {
     const [clientName, setClientName] = useState<string>("");
     const [amount, setAmount] = useState<string>("");
     const [dueDate, setdueDate] = useState<string>("");
-    const [selectedTheme, setSelectedTheme] = useState<string>("monochrome");
+    const [selectedTheme, setSelectedTheme] = useState<typeInvoiceTheme>(themeInvoice[0]);
     const [customColors, setCustomColors] = useState(false);
     const [customBg, setCustomBg] = useState<string>("#ffffff");
     const [customText, setCustomText] = useState<string>("#000000");
     const [customAccent, setCustomAcent] = useState<string>("#000000");
-
-    const currentTheme = themeInvoice.find((t) => t.id === selectedTheme);
+    const [clientId, setClientId] = useState<number>(0);
+    const currentTheme = themeInvoice.find((t) => t.id === selectedTheme.id);
     if (!isOpen) return null;
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -25,21 +25,35 @@ export default function ModalPage({ isOpen, onClose, onCreate }: InterFaceInvoic
 
         const invoiceData: InvoiceData = {
             id: `INV-${Date.now().toString().slice(-6)}`,
-            clientName: clientName.trim(),
-            amount: parseFloat(amount),
-            dueDate,
+            client_name: clientName.trim(),
+            clientId: clientId,
+            amount: parseInt(amount),
+            dueData: new Date(dueDate).toISOString().split("T")[0],
             date: new Date().toISOString().split("T")[0],
-            status: "Pending",
+            status: "pending",
             theme: selectedTheme,
-            customBg: customColors ? customBg : currentTheme!.bg,
-            customText: customColors ? customText : currentTheme!.text,
-            customAccent: customColors ? customAccent : currentTheme!.accent
+            customBg: customColors ? customBg : currentTheme!.backgroundColor,
+            customText: customColors ? customText : currentTheme!.textColor,
+            customAccent: customColors ? customAccent : currentTheme!.accentColor,
+            items: [
+                {
+                    description: "Invoice Service",
+                    quantity: 1,
+                    unitPrice: parseInt(amount)
+                }
+            ],
+            customization: {
+                textColor: customColors ? customText : currentTheme!.textColor,
+                backgroundColor: customColors ? customBg : currentTheme!.backgroundColor,
+                accentColor: customColors ? customAccent : currentTheme!.accentColor,
+                customColors
+            }
         }
         onCreate(invoiceData);
 
         setClientName("");
         setAmount("");
-        setSelectedTheme("monochrome");
+        setSelectedTheme(themeInvoice[0]);
         setCustomColors(false)
         onClose()
     }
@@ -66,9 +80,15 @@ export default function ModalPage({ isOpen, onClose, onCreate }: InterFaceInvoic
                             <h3 className="text-xl font-black uppercase">Invoice Details</h3>
                             <div>
                                 <label htmlFor="clientName" className="block font-bold mb-2 uppercase text-sm">
+                                    Client ID
+                                </label>
+                                <input type="number" value={clientId} placeholder="Enter Client ID" onChange={(e) => setClientId(parseInt(e.target.value))} className="w-full px-4 py-3 border-2 border-border bg-background text-foreground font-bold" />
+                            </div>
+                            <div>
+                                <label htmlFor="clientName" className="block font-bold mb-2 uppercase text-sm">
                                     Client Name
                                 </label>
-                                <input type="text" placeholder="Enter Client Name" onChange={(e) => setClientName(e.target.value)} className="w-full px-4 py-3 border-2 border-border bg-background text-foreground font-bold" />
+                                <input type="text" value={clientName} placeholder="Enter Client Name" onChange={(e) => setClientName(e.target.value)} className="w-full px-4 py-3 border-2 border-border bg-background text-foreground font-bold" />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
@@ -81,7 +101,7 @@ export default function ModalPage({ isOpen, onClose, onCreate }: InterFaceInvoic
                                     <label className="block font-bold mb-2 uppercase text-sm">
                                         Due Date
                                     </label>
-                                    <input type="date" value={dueDate} onChange={(e) => setAmount(e.target.value)} className="w-full px-4 py-3 border-2 border-border bg-background text-foreground font-bold" />
+                                    <input type="date" value={dueDate} onChange={(e) => setdueDate(e.target.value)} className="w-full px-4 py-3 border-2 border-border bg-background text-foreground font-bold" />
                                 </div>
                             </div>
 
@@ -94,14 +114,14 @@ export default function ModalPage({ isOpen, onClose, onCreate }: InterFaceInvoic
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                 {themeInvoice.map((theme, idx) => (
                                     <button key={idx} onClick={() => {
-                                        setSelectedTheme(theme.id)
+                                        setSelectedTheme(theme?.backgroundColor ? theme : themeInvoice[0])
                                         setCustomColors(false)
                                     }}
-                                        className={`p-4 border-4 transition-all${selectedTheme === theme.id && !customColors ? "border-foreground bg-muted" : "border-border"}`}>
+                                        className={`p-4 border-4 transition-all${selectedTheme.id === theme.id && !customColors ? "border-foreground bg-muted" : "border-border"}`}>
                                         <div className="flex flex-col items-center gap-2">
                                             <div className="flex gap-1">
-                                                <div className="w-6 h-6 border-2 border-black" style={{ backgroundColor: theme.bg }}></div>
-                                                <div className="w-6 h-6 border-2 border-black" style={{ backgroundColor: theme.accent }}></div>
+                                                <div className="w-6 h-6 border-2 border-black" style={{ backgroundColor: theme.backgroundColor }}></div>
+                                                <div className="w-6 h-6 border-2 border-black" style={{ backgroundColor: theme.accentColor }}></div>
                                             </div>
                                             <span className="text-xs font-bold text-center">
                                                 {theme.label}
@@ -158,16 +178,16 @@ export default function ModalPage({ isOpen, onClose, onCreate }: InterFaceInvoic
                         <div className="space-y-4 border-t-4 border-border pt-6">
                             <h3 className="text-xl font-black uppercase">PREVIEW</h3>
                             <div className="border-4 border-border p-8 aspect-video flex items-center justify-center" style={{
-                                backgroundColor: customColors || selectedTheme === "dark" ? customColors ? customBg : "#1a1a1a" : "#ffffff"
+                                backgroundColor: customColors || selectedTheme.backgroundColor === "dark" ? customColors ? customBg : "#1a1a1a" : "#ffffff"
                             }}>
                                 <div className="text-center">
-                                    <p className="text-2xl font-black mb-2" style={{ color: customColors ? customText : currentTheme?.text || "#000000" }}>
+                                    <p className="text-2xl font-black mb-2" style={{ color: customColors ? customText : currentTheme?.textColor || "#000000" }}>
                                         INVOICE
                                     </p>
-                                    <p className="text-xl font-bold" style={{ color: customColors ? customText : currentTheme?.text || "#000000" }}>
+                                    <p className="text-xl font-bold" style={{ color: customColors ? customText : currentTheme?.textColor || "#000000" }}>
                                         {clientName || "Client name"}
                                     </p>
-                                    <p className="text-sm mt-4 font-bold" style={{ color: customColors ? customAccent : currentTheme?.accent || "#000000" }}>
+                                    <p className="text-sm mt-4 font-bold" style={{ color: customColors ? customAccent : currentTheme?.accentColor || "#000000" }}>
                                         Rp.{amount || "-"}
                                     </p>
                                 </div>

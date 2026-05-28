@@ -1,3 +1,5 @@
+import { SchemaLogin, SchemaRegister } from "src/schema/schema";
+import z from "zod"
 export type TypeHeaderAauth = {
     propsJudul: string;
     propsDeskipsi: string;
@@ -10,37 +12,45 @@ export type TypeHeaderDashboard = {
     actionButton: () => void;
 }
 
-export type TypeDataDumy = {
-    id: string;
-    clientName: string;
+export type TypeDataInvoices = {
+    id: number | string;
+    client_name: string;
     amount: number;
     status: string;
     date: string;
-    dueDate: string;
-    theme: string;
-    customBg: string;
-    customText: string;
-    customAccent: string;
+    dueData: string;
 }
 
 export type InvoiceData = {
-    id: string;
-    clientName: string;
+    id: number | string;
+    clientId: number;
+    client_name: string;
     amount: number;
-    dueDate: string;
+    dueData: string;
     date: string;
-    status: "Paid" | "Pending" | "Overdue";
-    theme: string;
-    customBg: string;
-    customText: string;
-    customAccent: string;
+    status: "paid" | "pending" | "overdue";
+    theme: typeInvoiceTheme
+    customBg?: string;
+    customText?: string;
+    customAccent?: string;
+    items?: {
+        description: string;
+        quantity: number;
+        unitPrice: number;
+    }[];
+    customization?: {
+        textColor: string;
+        backgroundColor: string;
+        accentColor: string;
+        customColors: boolean;
+    }
 }
 
-export type QueueTask = {
+export type TypeQueueTask = {
     id: string;
-    clientName: string;
+    client_name: string;
     amount: number;
-    dueDate: string;
+    dueData: string;
     priority: "High" | "Medium" | "Low";
     action: string;
 }
@@ -48,9 +58,10 @@ export type QueueTask = {
 export type typeInvoiceTheme = {
     id: string;
     label: string;
-    bg: string;
-    text: string;
-    accent: string,
+    backgroundColor: string;
+    textColor: string;
+    accentColor: string;
+    customColors: boolean;
 }
 
 export type TypeHistoryEvent = {
@@ -64,3 +75,35 @@ export type TypeHistoryEvent = {
     type: "paid" | "created" | "pending" | "overdue" | "modified";
     details?: string;
 }
+
+export type Invoice = {
+    id: string | number;
+    client_name: string;
+    amount: number;
+    dueData: string;
+    clientId: number;
+    date: string;
+    status: "paid" | "pending" | "overdue";
+    theme: typeInvoiceTheme
+    customBg: string;
+    customText: string;
+    customAccent: string;
+    items: {
+        id: number;
+        description: string;
+        quantity: number;
+        unitPrice: number;
+        amount: number;
+    }[];
+
+    customization: {
+        textColor: string;
+        backgroundColor: string;
+        accentColor: string;
+        customColors: boolean;
+    } | null;
+
+}
+
+export type TypeLogin = z.infer<typeof SchemaLogin>
+export type TypeRegister = z.infer<typeof SchemaRegister>

@@ -78,10 +78,10 @@ export type TypeHistoryEvent = {
 
 export type Invoice = {
     id: string | number;
+    clientId: number;
     client_name: string;
     amount: number;
     dueData: string;
-    clientId: number;
     date: string;
     status: "paid" | "pending" | "overdue";
     theme: typeInvoiceTheme
@@ -102,7 +102,24 @@ export type Invoice = {
         accentColor: string;
         customColors: boolean;
     } | null;
+}
 
+export type TypeAktivitas = {
+    id: number;
+    eventType: string;
+    eventName: string;
+    description: string;
+    invoiceId: number | string;
+    clientName: string;
+    amount: string;
+    date: Date;
+    time: Date;
+    createdAt: Date
+    invoive: {
+        date: string;
+        clientName: string;
+        description: string;
+    }
 }
 
 export type TypeLogin = z.infer<typeof SchemaLogin>

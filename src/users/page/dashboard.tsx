@@ -139,7 +139,7 @@ export default function DashboardPage() {
                                     dataInvoice.map((item, index) => (
                                         <tr key={index} className={`border-2 border-border ${index % 2 === 0 ? "bg-background" : "bg-muted"} hover:bg-accent-yellow/10 transition-colors cursor-pointer`}>
                                             <td className='px-6 py-4 font-bold'>{`INV-${index + 1}`}</td>
-                                            <td className='px-6 py-4 font-semibold'>{item.client_name}</td>
+                                            <td className='px-6 py-4 font-semibold'>{item?.client_name}</td>
                                             <td className='px-6 py-4 font-bold'>Rp {item.amount.toLocaleString()}</td>
                                             <td className='px-6 py-4 text-sm'>{formateDate(item.date)}</td>
                                             <td className='px-6 py-4 text-sm'>{formateDate(item.date)}</td>

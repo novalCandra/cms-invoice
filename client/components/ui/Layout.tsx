@@ -12,8 +12,6 @@ export default function Layout({ children }: { children: ReactNode }) {
     const [isDark, setIsDark] = useState<boolean>(false);
     const location = useLocation();
     const navigate = useNavigate();
-    const [username, setUsername] = useState<string | null>(null);
-
     useEffect(() => {
         const stored = localStorage.getItem("theme");
         if (stored) {
@@ -21,22 +19,32 @@ export default function Layout({ children }: { children: ReactNode }) {
         } else {
             setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches)
         }
-
-        // load ino
-        const userInfo = localStorage.getItem("user");
-        if (userInfo) {
-            try {
-                const user = JSON.parse(userInfo);
-                setUsername(user.name)
-            } catch (error) {
-                setUsername(null);
-                console.error(error)
-            }
-        }
     }, [])
 
+    const toggleTheme = () => {
+        setIsDark(!isDark);
+    };
+
+    const usernameProfile = localStorage.getItem("nama");
+
+    useEffect(() => {
+        const root = document.documentElement;
+        if (isDark) {
+            root.classList.add("dark");
+            localStorage.setItem("theme", "dark")
+        } else {
+            root.classList.remove("dark");
+            localStorage.setItem("theme", "light")
+        }
+    }, [isDark])
     const handleLogout = () => {
-        navigate("/login")
+        try {
+            localStorage.removeItem("token");
+            localStorage.removeItem("nama");
+            navigate("/login")
+        } catch (error) {
+            return console.error(error)
+        }
     }
     const isActive = (href: string) => location.pathname === href;
     return (
@@ -87,16 +95,16 @@ export default function Layout({ children }: { children: ReactNode }) {
                             {/* Rigth Section */}
                             <div className="flex items-center gap-4">
                                 {/* Theme Toggle */}
-                                <button className='p-2 border-2 border-border hover:bg-muted transition-colors' aria-label='Toggle theme'>
+                                <button onClick={toggleTheme} className='p-2 border-2 border-border hover:bg-muted transition-colors' aria-label='Toggle theme'>
                                     {isDark ? <Sun size={24} /> : <Moon size={24} />}
                                 </button>
 
                                 {/* USER AVATAR */}
                                 <div className="flex items-center gap-2">
                                     <div className="w-12 h-12 bg-primary text-primary-foreground border-2 border-border flex items-center justify-center font-bold text-xl">
-                                        {username ? username.substring(0, 2).toLowerCase() : "ND"}
+                                        {usernameProfile ? usernameProfile.substring(0, 2).toLowerCase() : "ND"}
                                     </div>
-                                    <button onClick={() => handleLogout} className='p-2 border-2 border-border hover:bg-muted transition-colors hidden sm:block' aria-label='Logout' title='Logout'>
+                                    <button onClick={() => handleLogout()} className='p-2 border-2 border-border hover:bg-muted transition-colors hidden sm:block' aria-label='Logout' title='Logout'>
                                         <LogOut size={24} />
                                     </button>
                                 </div>

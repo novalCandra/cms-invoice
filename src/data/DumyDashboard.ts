@@ -1,5 +1,5 @@
-import { TypeDataDumy, QueueTask, TypeHistoryEvent } from "../../types/type.ts"
-export const TypeDataDumyDashboard: TypeDataDumy[] = [
+import { TypeDataInvoices, QueueTask, TypeHistoryEvent, TypeQueueTask } from "../../types/type.ts"
+export const TypeDataDumyDashboard: TypeDataInvoices[] = [
     {
         id: "INV-001",
         clientName: "Acme Corporation",
@@ -62,12 +62,12 @@ export const TypeDataDumyDashboard: TypeDataDumy[] = [
     },
 ];
 
-export const queueTasksDumy: QueueTask[] = [
+export const queueTasksDumy: TypeQueueTask[] = [
     {
         id: "INV-004",
         clientName: "Digital Design Co",
         amount: 2100,
-        dueDate: "2024-01-01",
+        dueData: "2024-01-01",
         priority: "High",
         action: "SEND REMINDER",
     },
@@ -75,7 +75,7 @@ export const queueTasksDumy: QueueTask[] = [
         id: "INV-003",
         clientName: "Global Services Ltd",
         amount: 8750,
-        dueDate: "2024-02-10",
+        dueData: "2024-02-10",
         priority: "High",
         action: "FOLLOW UP",
     },
@@ -83,7 +83,7 @@ export const queueTasksDumy: QueueTask[] = [
         id: "INV-002",
         clientName: "Tech Startup Inc",
         amount: 3200,
-        dueDate: "2024-02-20",
+        dueData: "2024-02-20",
         priority: "Medium",
         action: "PENDING PAYMENT",
     },
@@ -91,7 +91,7 @@ export const queueTasksDumy: QueueTask[] = [
         id: "INV-006",
         clientName: "Marketing Pro",
         amount: 5600,
-        dueDate: "2024-02-15",
+        dueData: "2024-02-15",
         priority: "Medium",
         action: "AWAITING APPROVAL",
     },
@@ -99,7 +99,7 @@ export const queueTasksDumy: QueueTask[] = [
         id: "INV-007",
         clientName: "Design Studio",
         amount: 4200,
-        dueDate: "2024-02-28",
+        dueData: "2024-02-28",
         priority: "Low",
         action: "DRAFT READY",
     },

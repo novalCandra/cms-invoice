@@ -2,11 +2,8 @@
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+
     "module": "ESNext",
     "skipLibCheck": true,
     /* Bundler mode */
@@ -28,14 +25,11 @@
     "strictNullChecks": false,
     /* Path mapping */
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "paths": {
-      "@/*": [
-        "./client/*"
-      ],
-      "@shared/*": [
-        "./shared/*"
-      ]
-    }
+      "@/*": ["./client/*"],
+      "@shared/*": ["./shared/*"],
+    },
   },
   "include": [
     "client/**/*",
@@ -47,10 +41,7 @@
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
-    "vite-env.d.ts"
+    "vite-env.d.ts",
   ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "exclude": ["node_modules", "dist"],
 }

@@ -12,12 +12,12 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-accent-yellow selection:text-background">
       {/* Navbar */}
       <nav className="w-full border-b-4 border-border bg-background py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 animate-in fade-in slide-in-from-top-8 duration-500">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <div className="w-8 h-8 bg-accent-yellow border-2 border-border text-background flex items-center justify-center font-black text-xl">
-            C
+            I
           </div>
           <span className="font-display font-black text-2xl tracking-tighter">
-            CMS-INVOIX
+            NVOIX
           </span>
         </div>
         <div className="hidden md:flex gap-6 font-bold">
@@ -180,11 +180,11 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t-4 border-border bg-background py-12 px-6">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <div className="w-6 h-6 bg-accent-yellow border-2 border-border text-background flex items-center justify-center font-black text-sm">
-              C
+              I
             </div>
-            <span className="font-display font-black text-xl">CMS-INVOIX</span>
+            <span className="font-display font-black text-xl">NVOIX</span>
           </div>
           <div className="font-bold text-sm">
             &copy; {new Date().getFullYear()} CMS-INVOIX. All rights reserved.

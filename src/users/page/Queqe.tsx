@@ -1,10 +1,38 @@
 import Layout from "../../../client/components/ui/Layout";
 import { AlertCircle, Clock, DollarSign } from 'lucide-react';
-import { queueTasksDumy } from "../../data/DumyDashboard";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Invoice } from "types/type";
 export default function QueqePage() {
-    const highPriority = queueTasksDumy.filter((t) => t.priority === "High")
-    const mediumPriority = queueTasksDumy.filter((t) => t.priority === "Medium");
-    const lowPriority = queueTasksDumy.filter((t) => t.priority === "Low")
+    const [invoice, setInvoice] = useState<Invoice[]>([]);
+    useEffect(() => {
+        const fetchInvoice = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/invoices`, {
+                    headers: {
+                        Authorization: `JWT ${token}`
+                    }
+                });
+                console.log(response.data.data)
+                setInvoice(response.data.data);
+            } catch (error) {
+                return error;
+            }
+        }
+        fetchInvoice();
+    }, [])
+
+    const overdueInvoices = invoice.filter((t) => t.status === "overdue");
+    const PendingInvoices = invoice.filter((t) => t.status === "pending");
+    const paidInvoices = invoice.filter((t) => t.status === "paid");
+    const formDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString("en-GB", {
+            month: "numeric",
+            day: "numeric",
+            year: "numeric"
+        })
+    }
     return (
         <>
             <Layout>
@@ -22,14 +50,14 @@ export default function QueqePage() {
                             <p className='text-sm font-bold text-muted-foreground uppercase tracking-wide'>
                                 Total Pending
                             </p>
-                            <p className='text-5xl font-black mt-3'>5</p>
+                            <p className='text-5xl font-black mt-3 text-status-overdue'>{PendingInvoices.length || 0}</p>
                         </div>
                         <div className="border-4 border-border bg-background p-6">
                             <p className='text-sm font-bold text-muted-foreground uppercase tracking-wide'>
                                 Overdue
                             </p>
-                            <p className='text-5xl font-black mt-3 text-status-overdue'>
-                                10
+                            <p className='text-5xl font-black mt-3 text-status-pending'>
+                                {overdueInvoices.length || 0}
                             </p>
                         </div>
 
@@ -37,8 +65,8 @@ export default function QueqePage() {
                             <p className='text-sm font-bold text-muted-foreground uppercase tracking-wide'>
                                 Total Amount
                             </p>
-                            <p className='text-5xl font-black mt-3'>
-                                100
+                            <p className='text-5xl font-black mt-3 text-status-paid'>
+                                Rp.{invoice.reduce((sum, item) => sum + item.amount, 0).toLocaleString() || "0.0000"}
                             </p>
                         </div>
                     </div>
@@ -53,16 +81,16 @@ export default function QueqePage() {
                                     Hight Priority
                                 </h3>
                                 <p className="text-sm text-muted-foreground font-bold mt-1">
-                                    {highPriority.length} task
+                                    {paidInvoices.length || 0} task
                                 </p>
                             </div>
                             <div className="space-y-3">
-                                {highPriority.map((item) => (
+                                {paidInvoices.map((item) => (
                                     <div key={item.id} className="border-4 border-status-overdue bg-background p-4 space-y-4">
                                         <div className="flex items-start justify-between gap-2">
                                             <div>
-                                                <p className="font-black text-lg">{item.id}</p>
-                                                <p className="font-black text-sm">{item.clientName}</p>
+                                                <p className="font-black text-lg">{item.id || "-"}</p>
+                                                <p className="font-black text-sm">{item.client_name || "-"}</p>
                                             </div>
                                             <span className="bg-status-overdue text-foreground px-2 py-1 font-black text-xs border-2 border-foreground">
                                                 URGENT
@@ -72,13 +100,16 @@ export default function QueqePage() {
                                         <div className="space-y-2 text-sm">
                                             <div className="flex items-center gap-2 font-bold">
                                                 <DollarSign size={16} />
-                                                12.0000
+                                                {item.amount || "0.0000"}
                                             </div>
                                             <div className="flex items-center gap-2 font-bold text-muted-foreground">
                                                 <Clock size={16} />
-                                                01/02/2026
+                                                {formDate(item?.dueData) || "01/02/2026"}
                                             </div>
                                         </div>
+                                        {/* <button className="w-full border-2 border-border px-3 py-2 font-bold text-xs uppercase hover:bg-muted transition-colors">
+                                            {item.}
+                                        </button> */}
                                     </div>
                                 ))}
                             </div>
@@ -92,16 +123,16 @@ export default function QueqePage() {
                                     Medium Priority
                                 </h3>
                                 <p className="text-sm text-muted-foreground font-bold mt-1">
-                                    {mediumPriority.length} task
+                                    {PendingInvoices.length} task
                                 </p>
                             </div>
                             <div className="space-y-3">
-                                {mediumPriority.map((item) => (
+                                {PendingInvoices?.map((item) => (
                                     <div key={item.id} className="border-4 border-status-pending bg-background p-4 space-y-4">
                                         <div className="flex items-start justify-between gap-2">
                                             <div>
-                                                <p className="font-black text-lg">{item.id}</p>
-                                                <p className="font-black text-sm">{item.clientName}</p>
+                                                <p className="font-black text-lg">{item.id || "-"}</p>
+                                                <p className="font-black text-sm">{item.client_name || "-"}</p>
                                             </div>
                                             <span className="bg-status-pending text-foreground px-2 py-1 font-black text-xs border-2 border-foreground">
                                                 ON TIME
@@ -111,13 +142,16 @@ export default function QueqePage() {
                                         <div className="space-y-2 text-sm">
                                             <div className="flex items-center gap-2 font-bold">
                                                 <DollarSign size={16} />
-                                                12.0000
+                                                {item.amount || "0.0000"}
                                             </div>
                                             <div className="flex items-center gap-2 font-bold text-muted-foreground">
                                                 <Clock size={16} />
-                                                01/02/2026
+                                                {formDate(item.dueData) || "01/02/2026"}
                                             </div>
                                         </div>
+                                        {/* <button className="w-full border-2 border-border px-3 py-2 font-bold text-xs uppercase hover:bg-muted transition-colors">
+                                            {item.action}
+                                        </button> */}
                                     </div>
                                 ))}
                             </div>
@@ -131,16 +165,16 @@ export default function QueqePage() {
                                     PENDING
                                 </h3>
                                 <p className="text-sm font-bold text-muted-foreground mt-1">
-                                    {lowPriority.length} task
+                                    {overdueInvoices.length} task
                                 </p>
                             </div>
                             <div className="space-y-3">
-                                {lowPriority.map((item) => (
+                                {overdueInvoices?.map((item) => (
                                     <div key={item.id} className="border-4 border-status-paid bg-background p-4 space-y-4">
                                         <div className="flex items-start justify-between gap-2">
                                             <div>
-                                                <p className="font-black text-lg">{item.id}</p>
-                                                <p className="font-black text-sm">{item.clientName}</p>
+                                                <p className="font-black text-lg">{item.id || "-"}</p>
+                                                <p className="font-black text-sm">{item.client_name || "-"}</p>
                                             </div>
                                             <span className="bg-status-paid text-foreground px-2 py-1 font-black text-xs border-2 border-foreground">
                                                 ON TIME
@@ -150,13 +184,16 @@ export default function QueqePage() {
                                         <div className="space-y-2 text-sm">
                                             <div className="flex items-center gap-2 font-bold">
                                                 <DollarSign size={16} />
-                                                12.0000
+                                                {item.amount || "0.0000"}
                                             </div>
                                             <div className="flex items-center gap-2 font-bold text-muted-foreground">
                                                 <Clock size={16} />
-                                                01/02/2026
+                                                {formDate(item.dueData) || "01/02/2026"}
                                             </div>
                                         </div>
+                                        {/* <button className="w-full border-2 border-border px-3 py-2 font-bold text-xs uppercase hover:bg-muted transition-colors">
+                                            {item.action}
+                                        </button> */}
                                     </div>
                                 ))}
                             </div>

@@ -1,5 +1,5 @@
-export const msalConfig: Configuration = {
-    auth: {
-        clientId: process.env.VITE_API_URL,
-    }
-}
+export const msalConfig = {
+  auth: {
+    clientId: process.env.VITE_API_URL,
+  },
+};

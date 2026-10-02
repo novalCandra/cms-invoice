@@ -44,7 +44,7 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                        <label htmlFor="" className='block font-bold uppercase text-sm text-black'>EMAIL</label>
+                        <label htmlFor="email" className='block font-bold uppercase text-sm text-black'>EMAIL</label>
                         <div className="relative">
                             <Mail size={20} className='absolute left-4 top-3.5 text-muted-foreground pointer-events-none' />
                             <input {...register('email')} type="email" id='email' placeholder='Enter your mail' name='email' className='w-full pl-12 pr-4 py-3 border-border bg-background text-foreground font-bold' />
@@ -53,12 +53,12 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                        <label htmlFor="" className='block font-bold uppercase text-sm text-black'>PASSWORD</label>
+                        <label htmlFor="password" className='block font-bold uppercase text-sm text-black'>PASSWORD</label>
                         <div className="relative">
                             <Lock size={20} className='absolute left-4 top-3.5 text-muted-foreground pointer-events-none' />
-                            <input {...register("password")} type="password" id='password' placeholder='*****' name='password' className='w-full pl-12 pr-4 py-3 border-border bg-background text-foreground font-bold' />
+                            <input {...register("password")} type={showPassword ? "text" : "password"} id='password' placeholder='*****' name='password' className='w-full pl-12 pr-4 py-3 border-border bg-background text-foreground font-bold' />
                             {errors.password && <span className='text-red-500 mt-2'>{errors.password.message}</span>}
-                            <button type='button' className='absolute right-4 top-3.5 text-muted-foreground hover:text-foreground transition-colors' aria-label='Toggle password visibilty'>
+                            <button type='button' onClick={() => SetShowPassword(!showPassword)} className='absolute right-4 top-3.5 text-muted-foreground hover:text-foreground transition-colors' aria-label='Toggle password visibilty'>
                                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
                         </div>
